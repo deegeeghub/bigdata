@@ -1,0 +1,31 @@
+$hadoop version
+Hadoop version is 2.6.0-cdh5.12.0
+
+$hadoop fs -ls /
+found 6 items
+
+$hadoop fs -mkdir /lab3a
+dir owner is cloudera
+
+$hadoop fs -du -s /user/
+
+$hadoop fs -touchz /user/cloudera/touchzfile.txt
+
+$hadoop fs -du -s /user/cloudera/touchzfile.txt
+
+$cat > hdfsHello.txt
+
+$hadoop fs -copyFromLocal /home/cloudera/hdfsHello.txt /user/cloudera/
+
+$hadoop fs -cat /user/cloudera/hdfsHello.txt
+
+$hadoop fs -text /user/cloudera/hdfsHello.txt
+
+$hadoop fs -copyToLocal touchzfile.txt /home/cloudera
+
+$hadoop fs -count /user/cloudera
+
+
+
+
+
