@@ -25,6 +25,17 @@ $hadoop fs -copyToLocal touchzfile.txt /home/cloudera
 
 $hadoop fs -count /user/cloudera
 
+$hadoop fs -mkdir /user/clouderaclone
+$hadoop fs -copyFromLocal /home/cloudera/hdfsHello.txt /user/clouderaclone/
+$hadoop fs -ls /user/clouderaclone/
+$hadoop fs -rm -r /user/clouderaclone
+$hadoop fs -ls /user/clouderaclone/
+
+$hadoop fs -mkdir /user/clouderaclone
+$hadoop fs -copyFromLocal /home/cloudera/hdfsHello.txt /user/clouderaclone/
+$hadoop fs -ls /user/clouderaclone/
+$hadoop fs -rm /user/clouderaclone/hdfsHello.txt
+$hadoop fs -ls /user/clouderaclone/
 
 
 
