@@ -1,0 +1,17 @@
+$sqoop list-databases --connect jdbc:mysql://quickstart.cloudera/ --username root --password cloudera
+
+#sqoop list-tables --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera
+
+#sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera --table departments
+
+$hadoop fs -ls /user/cloudera/departments/
+
+$hadoop fs -cat /user/cloudera/departments/part-m-00000
+$hadoop fs -cat /user/cloudera/departments/part-m-00001
+$hadoop fs -cat /user/cloudera/departments/part-m-00002
+$hadoop fs -cat /user/cloudera/departments/part-m-00003
+
+#sqoop import --conect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera --table products -m 1 --target-dir /user/cloudera/productsdata
+$hadoop fs -ls /users/cloudera/productsdata/
+$hadoop fs - cat /user/cloudera/productsdata/part-m-0000
+
