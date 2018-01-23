@@ -1,8 +1,9 @@
-$sqoop list-databases --connect jdbc:mysql://quickstart.cloudera/ --username root --password cloudera
+$sqoop list-databases --connect jdbc:mysql://quickstart.cloudera/ --username root --P
 
-#sqoop list-tables --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera
+#sqoop list-tables --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --P
 
-#sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera --table departments
+## first import command
+#sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --P --table departments
 
 $hadoop fs -ls /user/cloudera/departments/
 
@@ -11,7 +12,52 @@ $hadoop fs -cat /user/cloudera/departments/part-m-00001
 $hadoop fs -cat /user/cloudera/departments/part-m-00002
 $hadoop fs -cat /user/cloudera/departments/part-m-00003
 
-#sqoop import --conect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera --table products -m 1 --target-dir /user/cloudera/productsdata
+## demo use of target-dir
+#sqoop import --conect jdbc:mysql://quickstart.cloudera/retail_db --username root --P --table products -m 1 --target-dir /user/cloudera/productsdata
 $hadoop fs -ls /users/cloudera/productsdata/
 $hadoop fs - cat /user/cloudera/productsdata/part-m-0000
+
+## demonstrate use of query with conditions
+$sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --P -m 7 --target-dir /BDhomework/sqoop/import/ --query "SELECT * FROM orders where \$CONDITIONS and order_id>68869" --split-by order_date
+
+$sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments --username root --P -m 7 --target-dir /BDhomework/sqoop/import/departments
+$hadoop fs -ls /BDhomework/sqoop/import/departments/
+$hadoop fs -rm -r /BDhomework/sqoop/import/departments/
+$hadoop fs -ls /BDhomework/sqoop/import/departments/
+
+## how to import using direct option which is faster than JDBC
+sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments --username root --P -m 7 --target-dir /BDhomework/sqoop/import/departments --direct
+
+## demo use of custom file name
+sqoop import -D mapreduce.output.basename='departments' --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments --username root --P -m 7 --target-dir /BDhomework/sqoop/import/departments --direct
+
+## demo use of custom file name & incremental append
+ALTER TABLE departments ADD ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+UPDATE departments SET ts=now();
+
+insert into departments(department_id,department_name) values (8,"incrementalappend");
+select * from departments;
+
+## import for int field
+sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments --username root --P -m 7 --target-dir /BDhomework/sqoop/import/departments --incremental append --check-column department_id
+
+## import based on update to table
+sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db  --username root --password cloudera --table departments  --target-dir /BDhomework/sqoop/import/departments/  --incremental lastmodified --check-column ts --append
+
+## validate the import
+sqoop import --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments --username root --password cloudera -m 7 --target-dir /BDhomework/sqoop/import/validate/ --validate
+
+## export from HDFS using sqoop
+sqoop export --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments_sqoop --username root --password cloudera --export-dir /BDhomework/sqoop/import/validate/
+
+
+##use of sqoop eval
+sqoop eval --connect jdbc:mysql://quickstart.cloudera/retail_db --username root --password cloudera --query "select * from departments_sqoop"
+
+## sqoop job
+sqoop job --create incrementjob -- import --connect jdbc:mysql://quickstart.cloudera/retail_db --table departments --username root --password cloudera --target-dir /BDhomework/sqoop/import/job/ --incremental append --check-column department_id
+
+sqoop job --list
+sqoop job --show incrementjob
+sqoop job --exec incrementjob
 
