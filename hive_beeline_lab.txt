@@ -1,0 +1,50 @@
+>cat > empinfo
+100	abcd	100000
+200	sdkf	200000
+300	kjsfd	893458
+400	ksdjf	930383
+<Ctrl-D> to save
+
+>!connect jdbc:hive2://localhost:10000 hive hive org.apache.hive.jdbc.HiveDriver
+
+>show tables;
+
+>create table employee(empid int, empname string, salary float) row format delimited fields terminated by '\t';
+
+>desc employee;
+
+>select * from employee;
+
+>load data local inpath '/home/cloudera/empinfo' into table employee
+
+>select * from employee;
+
+>select * from employeed where salary > 200000;
+
+>drop table employee;
+
+#get error since table was internal table
+>select * from employee;
+
+#now try with external table
+>show tables;
+
+>create external table employee(empid int, empname string, salary float) row format delimited fields terminated by '\t';
+
+>desc employee;
+
+>select * from employee;
+
+>load data local inpath '/home/cloudera/empinfo' into table employee
+
+>select * from employee;
+
+>select * from employeed where salary > 200000;
+
+>drop table employee;
+
+#get error since table was external table
+>select * from employee;
+
+
+
